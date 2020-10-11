@@ -1,0 +1,3 @@
+[submodule "EsperantoWordSegmenter"]
+	path = EsperantoWordSegmenter
+	url = https://github.com/tguinard/EsperantoWordSegmenter.git
