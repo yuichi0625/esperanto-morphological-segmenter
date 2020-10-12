@@ -6,7 +6,7 @@ This Python implementation has some modifications from the original one (for ins
 The original paper is [here](https://ufal.mff.cuni.cz/pbml/105/art-guinard.pdf).
 
 ## Requirements
-- Python >= 3.
+- Python >= 3.6
 
 ## Installation
 ```
@@ -17,7 +17,7 @@ git clone https://github.com/yuichi0625/esperanto-morphological-segmenter.git --
 ### train Markov Model
 In the original implementation, every time you execute the main script, it loads train.txt and makes a trainsition map for n-gram Markov Model.  
 In this reimplementation, I split this phase as a single script, which saves the transition map as a json file.  
-**I already saved json files for bigram and trigram trained by train.txt, so you don't need to use it if it's enough.**
+**I already saved json files for bigram and trigram trained by train.txt, so you don't need to use this script if it's enough.**
 ```
 usage: train_markov_model.py [-h] [-t TRAIN_DATA [TRAIN_DATA ...]] [-n N_GRAM]
                              [-o OUTPUT_DIR] [--ews_dir EWS_DIR]
@@ -37,17 +37,7 @@ For instance,
 ```
 python train_markov_model.py -t train1.txt train2.txt -n 3
 ```
-
-Then it will save a json file like below
-```json
-{
-    "('<BOW>', 'preposition')": {
-        "<EOW>": 6.113067292644758e-05,
-        "tenseSuffix": 0.005208333333333333,
-        "verb": 9.698944754810677e-05,
-        "noun": 3.7609820676375015e-06
-    }, ...
-```
+Then it will save a json file containing a trainsition map for n-gram.
 
 ### evaluate segmentation
 I made two scripts for evaluating the morphological segmenter.
@@ -116,8 +106,6 @@ I made two scripts for evaluating the morphological segmenter.
     - `incorrect results`: words that are segmented incorrectly
     - `no segmentation results`: words that the segmenter could not find any possible segmentation from
 
-
-
 ## Accuracy
 | train data | evaluation data | n_gram | accuracy (%) | correct (pcs) | incorrect (pcs) |
 | --- | --- | --- | --- | --- | --- |
@@ -127,15 +115,15 @@ I made two scripts for evaluating the morphological segmenter.
 | train.txt<br>test.txt | test.txt | 3 | 97.57 | 10334 | 257 |
 | train.txt | random_words.txt | 2 | 75.0 | 12 | 4 |
 | train.txt | random_words.txt | 3 | 81.25 | 13 | 3 |
-| train.txt | liberafolio_2020_09_09.txt | 2 |  |  |  |
-| train.txt | liberafolio_2020_09_09.txt | 3 |  |  |  |
+| train.txt | liberafolio_2020_09_09.txt | 2 | 99.50 | 808 | 4 |
+| train.txt | liberafolio_2020_09_09.txt | 3 | 99.50 | 808 | 4 |
 | train.txt | liberafolio_2020_09_16.txt | 2 | 97.72 | 688 | 16 |
 | train.txt | liberafolio_2020_09_16.txt | 3 | 97.72 | 688 | 16 |
 | train.txt | liberafolio_2020_09_22.txt | 2 | 97.65 | 625 | 15 |
 | train.txt | liberafolio_2020_09_22.txt | 3 | 97.81 | 626 | 14 |
 
 ## Problems to be solved
-There are some problems I met when reimplementing the algorithm:
+I met some problems when reimplementing the algorithm:
 
 ### Morphemes by Types
 morphemesByType contains some confusing words, which interrupt prediction, e.g.  
