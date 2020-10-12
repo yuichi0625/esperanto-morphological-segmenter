@@ -6,7 +6,7 @@ from segmenter import Segmenter
 from segmenter.preprocess import apply_hatmap
 
 
-def load_eval_data(paths):
+def load_eval_data(path):
     """Load text data and return generator for each row
 
     Each row of given text data is assumed to be "word(tab)word segmented by apostrophe"
@@ -19,21 +19,20 @@ def load_eval_data(paths):
             word (str): word
             segment (list[str]): list of segmented morphemes from word
     """
-    for path in paths:
-        path = Path(path)
-        assert path.exists(), f'{path} does not exist.'
+    path = Path(path)
+    assert path.exists(), f'{path} does not exist.'
 
-        with open(path, encoding='utf-8') as f:
-            for row in f.read().splitlines():
-                word, segm_word = [apply_hatmap(word) for word in row.split('\t')[:2]]
-                segment = segm_word.split('\'')
-                yield word, segment
+    with open(path, encoding='utf-8') as f:
+        for row in f.read().splitlines():
+            word, segm_word = [apply_hatmap(word) for word in row.split('\t')[:2]]
+            segment = segm_word.split('\'')
+            yield word, segment
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--eval_data', nargs='+',
-                        default=['./EsperantoWordSegmenter/experiments/test.txt'],
+    parser.add_argument('-t', '--text_file',
+                        default='./EsperantoWordSegmenter/experiments/test.txt',
                         help='indicate file paths for evaluating')
     parser.add_argument('-m', '--markov_model_dir', default='./markov_model',
                         help='indicate directory path to markov_model')
@@ -56,7 +55,7 @@ def main():
     no_segmentation_results = []
     # There are the same words in consecutive rows in, for instance, train.txt and test.txt
     prev_word = ''
-    for word, answer in load_eval_data(args.eval_data):
+    for word, answer in load_eval_data(args.text_file):
         if word != prev_word:
             segms, _, _ = segmenter.segment_and_evaluate(word)
             # All the returned values are [] if no possible segmentations are found

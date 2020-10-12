@@ -6,7 +6,7 @@ from segmenter import Segmenter
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-w', '--word', required=True,
+    parser.add_argument('word',
                         help='input word to be segmented')
     parser.add_argument('-m', '--markov_model_dir', default='./markov_model',
                         help='indicate directory path to markov_model')
