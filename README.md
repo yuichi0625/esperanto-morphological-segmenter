@@ -5,6 +5,15 @@ This Python implementation has some modifications from the original one (for ins
 
 The original paper is [here](https://ufal.mff.cuni.cz/pbml/105/art-guinard.pdf).
 
+## Table of Contents
+- [Requirements](#Requirements)
+- [Installation](#Installation)
+- [Usage](#Usage)
+    - [train Markov Model](#train-Markov-Model)
+    - [evaluate segmentation](#evaluate-segmentation)
+- [Accuracy](#Accuracy)
+- [Problems to be solved](#Problems-to-be-solved)
+
 ## Requirements
 - Python >= 3.6
 
