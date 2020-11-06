@@ -19,7 +19,7 @@ The original paper is [here](https://ufal.mff.cuni.cz/pbml/105/art-guinard.pdf).
 
 ## Installation
 ```
-git clone https://github.com/yuichi0625/esperanto-morphological-segmenter.git --recursive
+git clone https://github.com/yuichi0625/reimplemented-esperanto-word-segmenter.git --recursive
 ```
 
 ## Usage
