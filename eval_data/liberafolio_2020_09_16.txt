@@ -605,7 +605,7 @@ neniu	neniu
 loĝas	loĝ'as
 aliloke	ali'lok'e
 Ĝis	Ĝis
-augŭsto	augŭst'o
+aŭgusto	aŭgust'o
 2019	2019
 ni	ni
 luis	lu'is
