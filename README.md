@@ -22,10 +22,10 @@ git clone https://github.com/yuichi0625/reimplemented-esperanto-word-segmenter.g
 ```
 
 ## Usage
-Please see [src/exec.bat]() / [src/exec.sh]() for more details.
+Please see [src/exec.bat](src/exec.bat) or [src/exec.sh](src/exec.sh) for more details.
 
 ### src/word_segmenter.py
-This is the reimplementation of [WordSegmenter.scala]().
+This is the reimplementation of [WordSegmenter.scala](https://github.com/tguinard/EsperantoWordSegmenter/blob/230cea85c7ed9a3e72962bf14385309cb41affd6/src/WordSegmenter.scala).
 ```
 usage: word_segmenter.py [-h] [-o OUTPUT_FILE] [-m] [-r] [-n] [-b] [-t]
                          [-tf TRAINING_FILE]
