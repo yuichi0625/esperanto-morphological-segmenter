@@ -1,4 +1,4 @@
-# Esperanto Morphological Segmenter
+# Reimplemented Esperanto Word Segmenter
 This is a reimplementation of [EsperantoWordSegmenter](https://github.com/tguinard/EsperantoWordSegmenter) in Python (originally in Scala), which is a tool for segmenting Esperanto words into morphemes.
 
 The original paper is [here](https://ufal.mff.cuni.cz/pbml/105/art-guinard.pdf).
