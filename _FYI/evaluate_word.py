@@ -12,7 +12,7 @@ def main():
                         help='indicate directory path to markov_model')
     parser.add_argument('-n', '--n_gram', type=int, default=2,
                         help='set number of n_gram')
-    parser.add_argument('--ews_dir', default='./EsperantoWordSegmenter',
+    parser.add_argument('--ews_dir', default='../EsperantoWordSegmenter',
                         help='indicate the directory path to EsperantoWordSegmenter')
     args = parser.parse_args()
 

@@ -32,7 +32,7 @@ def load_eval_data(path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--text_file',
-                        default='./EsperantoWordSegmenter/experiments/test.txt',
+                        default='../EsperantoWordSegmenter/experiments/test.txt',
                         help='indicate file paths for evaluating')
     parser.add_argument('-m', '--markov_model_dir', default='./markov_model',
                         help='indicate directory path to markov_model')
@@ -40,7 +40,7 @@ def main():
                         help='set number of n_gram')
     parser.add_argument('-o', '--output_path', default='output.csv',
                         help='indicate output csv file path')
-    parser.add_argument('--ews_dir', default='./EsperantoWordSegmenter',
+    parser.add_argument('--ews_dir', default='../EsperantoWordSegmenter',
                         help='indicate the directory path to EsperantoWordSegmenter')
     args = parser.parse_args()
 
