@@ -1,9 +1,10 @@
 import argparse
+from typing import Dict
 
 from word_segmenter import x_notation
 
 
-def read_file(path):
+def read_file(path: str) -> Dict[str, str]:
     word2annot = {}
     with open(path, encoding='utf-8') as f:
         for row in f.read().strip().split('\n'):
