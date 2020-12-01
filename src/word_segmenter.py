@@ -1,12 +1,15 @@
+from __future__ import annotations
+
 import argparse
 import enum
 import os
+from typing import Dict, List, Optional, Set, Tuple
 
-from tqdm import tqdm
+from tqdm import tqdm  # type: ignore
 
 # in Python, "enum.Enum" cannot have mutable variables
 ignore_rules = False
-word_counts = {}
+word_counts: Dict[MarkovMorphemeType, int] = {}
 total = 0
 
 
@@ -24,24 +27,11 @@ class RuleMorphemeType(enum.Enum):
     TablePronounEnding = enum.auto()
 
     @classmethod
-    def is_valid_ending(cls, value):
-        """
-        Args:
-            value (RuleMorphemeType)
-        Returns:
-            bool
-        """
+    def is_valid_ending(cls, value: Optional[RuleMorphemeType]) -> bool:
         return ignore_rules or (value is not None and value != cls.Normal)
 
     @classmethod
-    def agrees_with_previous(cls, value, prev):
-        """
-        Args:
-            value (RuleMorphemeType)
-            prev (RuleMorphemeType)
-        Returns:
-            bool
-        """
+    def agrees_with_previous(cls, value: Optional[RuleMorphemeType], prev: Optional[RuleMorphemeType]) -> bool:
         if value == cls.TablePronounEnding:
             return ignore_rules or (prev == cls.Table or prev == cls.Pronoun)
         elif value == cls.Article:
@@ -49,9 +39,17 @@ class RuleMorphemeType(enum.Enum):
         else:
             return ignore_rules or prev != cls.Article
 
-    def please_ignore_rules():
-        global ignore_rules
-        ignore_rules = True
+
+def please_ignore_rules() -> None:
+    global ignore_rules
+    ignore_rules = True
+
+
+def total_morphemes() -> int:
+    global total
+    if total == 0:
+        total = sum(word_counts.values())
+    return total
 
 
 class MarkovMorphemeType(enum.Enum):
@@ -92,47 +90,19 @@ class MarkovMorphemeType(enum.Enum):
     Start = enum.auto()
     End = enum.auto()
 
-    def set_word_count(key, value):
-        """
-        Args:
-            key (MarkovMorphemeType)
-            value (int)
-        """
+    def set_word_count(key: MarkovMorphemeType, value: int) -> None:
         global word_counts, total
         word_counts[key] = value
         total = 0
 
-    def total_morphemes():
-        """
-        Returns:
-            int
-        """
-        global total
-        if total == 0:
-            total = sum(word_counts.values())
-        return total
-
-    @classmethod
-    def type_count(cls, value):
-        """
-        Args:
-            value (MarkovMorphemeType)
-        Returns:
-            int
-        """
+    def type_count(value: MarkovMorphemeType) -> int:
         if value in word_counts:
             return word_counts[value]
         else:
-            return cls.total_morphemes()
+            return total_morphemes()
 
     @classmethod
-    def to_rule_morpheme_type(cls, value):
-        """
-        Args:
-            value (MarkovMorphemeType)
-        Returns:
-            RuleMorphemeType
-        """
+    def to_rule_morpheme_type(cls, value: MarkovMorphemeType):
         to_word_end = {cls.AdjEnding, cls.AdvEnding, cls.NounEnding, cls.VerbEnding, cls.MidEnding, cls.O}
         to_table_pronoun_ending = {cls.TablePronounEnding}
         to_pronoun = {cls.Pronoun}
@@ -167,17 +137,11 @@ class MarkovModel:
     """
     n-gram Markov Model
     """
-    def __init__(self, filename, trie_root, n=1):
-        """
-        Args:
-            filename (str)
-            trie_root (TrieNode)
-            n (int)
-        """
+    def __init__(self, filename: str, trie_root: TrieNode, n: int = 1):
         self.model_order = n
         self.transitions = self.make_transitions(filename)
 
-    def make_transitions(self, filename):
+    def make_transitions(self, filename: str):
         """
         Args:
             filename (str)
@@ -198,10 +162,10 @@ class MarkovModel:
                 for i in range(0, len(segmentation) + 1):
                     individual_transitions.append((states[i:i+self.model_order], states[i+self.model_order], freq))
 
-        total_transitions = {}
+        total_transitions: Dict[Tuple[MarkovMorphemeType, ...], Dict[MarkovMorphemeType, float]] = {}
         for transition in individual_transitions:
-            key, next_state, freq = transition
-            key = tuple(key)  # in Python, "list" cannot be a key of a "dict"
+            key_, next_state, freq = transition
+            key = tuple(key_)  # in Python, "list" cannot be a key of a "dict"
             if key not in total_transitions:
                 total_transitions[key] = {}
             if next_state not in total_transitions[key]:
@@ -212,12 +176,12 @@ class MarkovModel:
         transition_probabilities = {}
         for key in total_transitions.keys():
             for k, v in total_transitions[key].items():
-                total_transitions[key][k] = v / totals[key] / float(MarkovMorphemeType.type_count(k)) * float(MarkovMorphemeType.total_morphemes()) * multiplier
+                total_transitions[key][k] = v / totals[key] / float(MarkovMorphemeType.type_count(k)) * float(total_morphemes()) * multiplier
             transition_probabilities[key] = total_transitions[key]
 
         return transition_probabilities
 
-    def evaluate_segmentation(self, segmentation):
+    def evaluate_segmentation(self, segmentation: List[MarkovMorphemeType]) -> Tuple[float, int]:
         """
         Args:
             segmentation (list[MarkovMorphemeType])
@@ -243,26 +207,16 @@ class TrieNode:
     """
     Trie data structure for storing morphemes along with their types
     """
-    def __init__(self, the_letter, the_root=None):
-        """
-        Args:
-            the_letter (str)
-            the_root (TrieNode)
-        """
+    def __init__(self, the_letter: str, the_root: Optional[TrieNode] = None) -> None:
         self.root = self if the_root is None else the_root
         self.letter = the_letter
-        self.markov_morpheme_types = set()
-        self.rule_morpheme_types = set()
-        self.children = dict()
+        self.markov_morpheme_types: Set[MarkovMorphemeType] = set()
+        self.rule_morpheme_types: Set[Optional[RuleMorphemeType]] = set()
+        self.children: Dict[str, TrieNode] = dict()
 
-    def get_or_add_child(self, the_letter, mt=None):
+    def get_or_add_child(self, the_letter: str, mt: Optional[MarkovMorphemeType] = None) -> TrieNode:
         """Add child if doesn't exist
            Add mt and smt (if not None) to the child's types
-        Args:
-            the_letter (str)
-            mt (MarkovMorphemeType)
-        Returns:
-            TrieNode
         """
         if the_letter in self.children:
             child = self.children[the_letter]
@@ -277,12 +231,8 @@ class TrieNode:
 
         return child
 
-    def add_word(self, mt, word, index=0):
+    def add_word(self, mt: MarkovMorphemeType, word: str, index: int = 0) -> None:
         """Define new word in trie
-        Args:
-            mt (MarkovMorphemeType)
-            word (str)
-            index (int)
         """
         if len(word) > index:
             letter = word[index]
@@ -291,15 +241,9 @@ class TrieNode:
             child = self.get_or_add_child(letter, current_mt)
             child.add_word(mt, word, new_index)
 
-    def find_morphemes(self, word, start_index=0, next_index=0, prev=None):
+    def find_morphemes(self, word: str, start_index: int = 0, next_index: int = 0,
+                       prev: Optional[RuleMorphemeType] = None) -> List[List[str]]:
         """First pass segmentation: look for all legal morphemes
-        Args:
-            word (str)
-            start_index (int)
-            next_index (int)
-            prev (RuleMorphemeType)
-        Returns:
-            list[list[str]]
         """
         solutions = list()
         valid_morphemes = {mt for mt in self.rule_morpheme_types
@@ -325,13 +269,7 @@ class TrieNode:
 
         return solutions
 
-    def get_all_tags(self, solution):
-        """
-        Args:
-            solution (list[str])
-        Returns:
-            list[list[MarkovMorphemeType]]
-        """
+    def get_all_tags(self, solution: List[str]) -> List[List[MarkovMorphemeType]]:
         if not solution:
             return [[]]
         else:
@@ -340,13 +278,8 @@ class TrieNode:
                     for value in self.get_indexed_node(solution[0]).markov_morpheme_types
                     for sub_solution in next_solutions]
 
-    def get_indexed_node(self, word, index=0):
+    def get_indexed_node(self, word: str, index: int = 0):
         """Find trie node representing word
-        Args:
-            word (str)
-            index (int)
-        Returns:
-            TrieNode
         """
         if index >= len(word):
             return self
@@ -356,13 +289,7 @@ class TrieNode:
             return None
 
 
-def build_trie(morphemes_by_type_dir):
-    """
-    Args:
-        morphemes_by_type_dir (str)
-    Returns:
-        TrieNode
-    """
+def build_trie(morphemes_by_type_dir: str) -> TrieNode:
     morpheme_type_file_names = {
         MarkovMorphemeType.AdjEnding: 'adjEnding.txt',
         MarkovMorphemeType.Adj: 'adj.txt',
@@ -407,22 +334,14 @@ def build_trie(morphemes_by_type_dir):
     return trie_root
 
 
-def solution_string(solutions):
+def solution_string(solutions: List[List[str]]) -> str:
     """for printing solution
-    Args:
-        solutions (list[list[str]])
-    Returns:
-        str
     """
     return '\t'.join(['\''.join(lst) for lst in solutions])
 
 
-def x_notation(word):
+def x_notation(word: str) -> str:
     """convert to x notation ("sxajnas")
-    Args:
-        word (str)
-    Returns:
-        str
     """
     hat_map = {
         'ĉ': 'cx',
@@ -439,13 +358,7 @@ def x_notation(word):
     return new_word
 
 
-def maximal_match(segmentations):
-    """
-    Args:
-        segmentations (list[list[str]])
-    Returns:
-        list[str]
-    """
+def maximal_match(segmentations: List[List[str]]) -> List[str]:
     segs = set(tuple(seg) for seg in segmentations)  # in Python, "set" cannot include "list"
     scores = [(len(solution), solution) for solution in segs]
     if not scores:
@@ -455,7 +368,7 @@ def maximal_match(segmentations):
         return list(best[1])
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file')
     parser.add_argument('-o', '--output_file', default='output.txt')
@@ -482,7 +395,7 @@ def main():
     use_trigram = args.use_trigram
 
     if no_rules:
-        RuleMorphemeType.please_ignore_rules()
+        please_ignore_rules()
 
     trie_root = build_trie(args.morphemes_by_type_directory)
     markov_model_order = 3 if use_trigram else 2 if use_bigram else 1
@@ -507,7 +420,7 @@ def main():
                         for solution in solutions
                         for tag in trie_root.get_all_tags(solution)]
 
-                    best_solutions = []
+                    best_solutions: List[List[str]] = []
                     best_so_far = (-1.0, 0)
                     for sol_and_score in solution_scores:
                         solution, _, score_penalty = sol_and_score
