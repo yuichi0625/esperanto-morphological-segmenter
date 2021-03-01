@@ -1,2 +1,0 @@
-WORD_BEGIN = '<BOW>'
-WORD_END = '<EOW>'
