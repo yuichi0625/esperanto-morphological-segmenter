@@ -1,61 +1,56 @@
 # Reimplemented Esperanto Word Segmenter
-This is a reimplementation of [EsperantoWordSegmenter](https://github.com/tguinard/EsperantoWordSegmenter) in Python (originally in Scala), which is a tool for segmenting Esperanto words into morphemes.
-
-The original paper is [here](https://ufal.mff.cuni.cz/pbml/105/art-guinard.pdf).
+This is a reimplementation of [EsperantoWordSegmenter](https://github.com/tguinard/EsperantoWordSegmenter) in Python (originally in Scala), which is a tool for segmenting Esperanto words into morphemes. The original paper is [here](https://ufal.mff.cuni.cz/pbml/105/art-guinard.pdf).
 
 ## Table of Contents
 - [Requirements](#Requirements)
 - [Installation](#Installation)
 - [Usage](#Usage)
     - [src/word_segmenter.py](#srcword_segmenterpy)
-    - [src/calc_accuracy.py](#srccalc_accuracypy)
+    - [e_segmenter (as a package)](#e_segmenter-as-a-package)
 - [Accuracy](#Accuracy)
 - [Problems to be solved](#Problems-to-be-solved)
 
 ## Requirements
 - Python >= 3.6
-- tqdm
 
 ## Installation
-```
-git clone https://github.com/yuichi0625/reimplemented-esperanto-word-segmenter.git --recursive
+```bash
+$ git clone https://github.com/yuichi0625/reimplemented-esperanto-word-segmenter.git --recursive
+
+# You don't need to install as a package if you just want to give it a try.
+# Instead, please use src/word_segmenter.py
+$ python setup.py install
 ```
 
 ## Usage
-Please see [src/exec.bat](src/exec.bat) or [src/exec.sh](src/exec.sh) for more details.
-
 ### src/word_segmenter.py
 This is the reimplementation of [WordSegmenter.scala](https://github.com/tguinard/EsperantoWordSegmenter/blob/230cea85c7ed9a3e72962bf14385309cb41affd6/src/WordSegmenter.scala).
-```
-usage: word_segmenter.py [-h] [-o OUTPUT_FILE] [-m] [-r] [-n] [-b] [-t]
-                         [-tf TRAINING_FILE]
-                         [-mbtd MORPHEMES_BY_TYPE_DIRECTORY]
-                         input_file
 
-positional arguments:
-  input_file
-
-optional arguments:
-  -o, --output_file
-  -m, --max_match       Use maximal morpheme matching instead of Markov model
-  -r, --random          Skip disambiguation (step 2)
-  -n, --no_rules        Apply no rules in step 1
-  -b, --use_bigram      Use bigram Markov model
-  -t, --use_trigram     Use trigram Markov model
-  -tf, --training_file
-  -mbtd, --morphemes_by_type_directory
+```bash
+$ python src/word_segmenter.py input_file -b
 ```
 
-### src/calc_accuracy.py
-This is a script for checking the accuracy between answer and prediction.
+`input_file` should contain one word for each row, for instance,
+```bash
+# examples.txt
+animalo
+belulino
+certe
+dependas
 ```
-usage: calc_accuracy.py [-h] -a ANSWER_FILE -p PRED_FILE [-s]
 
-optional arguments:
-  -a, --answer_file     text file containing correct annotations
-  -p, --pred_file       text file containing prediction results
-  -s, --show_incorrect  show incorrect results
+
+### e_segmenter (as a package)
+```python
+from e_segmenter import EsperantoWordSegmenter
+
+segmenter = EspernatoWordSegmenter()
+segmenter('belulino')  # -> "bel'ul'in'o"
+segmenter('katojn')    # -> "kat'ojn" (word endings are concatenated)
+segmenter('facebook')  # -> "" (if no valid segmentation is found)
 ```
+
+CAUTION: If you try this in this directory (I mean `Path(README.md).parent`), it will raise an error because it will try to read e_segmenter in this directory directly, which is empty.
 
 ## Accuracy
 | train data | evaluation data | n_gram | accuracy (%) | correct (pcs) | incorrect (pcs) |
