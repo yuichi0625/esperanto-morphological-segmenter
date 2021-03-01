@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import argparse
 import enum
-import os
+from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
-
-from tqdm import tqdm  # type: ignore
 
 # in Python, "enum.Enum" cannot have mutable variables
 ignore_rules = False
@@ -325,7 +323,7 @@ def build_trie(morphemes_by_type_dir: str) -> TrieNode:
     trie_root = TrieNode('^')
 
     for key, val in morpheme_type_file_names.items():
-        with open(os.path.join(morphemes_by_type_dir, val), encoding='utf-8') as f:
+        with open(Path(morphemes_by_type_dir) / val, encoding='utf-8') as f:
             words = f.read().strip().split('\n')
         for word in words:
             trie_root.add_word(key, word)
@@ -371,7 +369,6 @@ def maximal_match(segmentations: List[List[str]]) -> List[str]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('input_file')
-    parser.add_argument('-o', '--output_file', default='output.txt')
     parser.add_argument('-m', '--max_match', action='store_true',
                         help='Use maximal morpheme matching instead of Markov model')
     parser.add_argument('-r', '--random', action='store_true',
@@ -383,9 +380,9 @@ def main() -> None:
     parser.add_argument('-t', '--use_trigram', action='store_true',
                         help='Use trigram Markov model')
     parser.add_argument('-tf', '--training_file',
-                        default='../EsperantoWordSegmenter/experiments/train.txt')
+                        default=str(Path(__file__).parent / '../EsperantoWordSegmenter/experiments/train.txt'))
     parser.add_argument('-mbtd', '--morphemes_by_type_directory',
-                        default='../EsperantoWordSegmenter/morphemesByType/sets/')
+                        default=str(Path(__file__).parent / '../EsperantoWordSegmenter/morphemesByType/sets/'))
     args = parser.parse_args()
 
     max_match = args.max_match
@@ -401,18 +398,18 @@ def main() -> None:
     markov_model_order = 3 if use_trigram else 2 if use_bigram else 1
     markov_model = MarkovModel(args.training_file, trie_root, markov_model_order)
 
-    with open(args.output_file, 'w', encoding='utf-8') as out:
-        with open(args.input_file, encoding='utf-8') as f:
-            for line in tqdm(f.read().strip().split('\n')):
-                word = line.split('\t')[0].lower()
+    with open(args.input_file, encoding='utf-8') as f:
+        for line in f.read().split('\n'):
+            if line:
+                word = line.split('\t')[0]
 
                 # find legal segmentations
-                solutions = trie_root.find_morphemes(x_notation(word))
+                solutions = trie_root.find_morphemes(x_notation(word.lower()))
 
                 if random:
-                    out.write(f'{solution_string(solutions)}\n')
+                    print(f'{solution_string(solutions)}')
                 elif max_match:
-                    out.write(f'{word}\t{solution_string([maximal_match(solutions)])}\n')
+                    print(f'{word}\t{solution_string([maximal_match(solutions)])}')
                 else:
                     # Markov model
                     solution_scores = [
@@ -430,7 +427,7 @@ def main() -> None:
                                 best_solutions = []
                             best_solutions.append(solution)
 
-                    out.write(f'{word}\t{solution_string([maximal_match(best_solutions)])}\n')
+                    print(f'{word}\t{solution_string([maximal_match(best_solutions)])}')
 
 
 if __name__ == '__main__':
