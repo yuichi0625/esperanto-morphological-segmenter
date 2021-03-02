@@ -1,17 +1,17 @@
 from pathlib import Path
 from typing import List
 
-from .word_segmenter import (
+from src.word_segmenter import (
     build_trie, maximal_match, solution_string, x_notation, MarkovModel)
 
 
 class EsperantoWordSegmenter:
     def __init__(self, ngram: int = 2) -> None:
         self.trie_root = build_trie(
-            str(Path(__file__).parent / '../data/sets/'))
+            str(Path(__file__).parent / './EsperantoWordSegmenter/morphemesByType/sets'))
 
         self.markov_model = MarkovModel(
-            str(Path(__file__).parent / '../data/train.txt'),
+            str(Path(__file__).parent / './EsperantoWordSegmenter/experiments/train.txt'),
             self.trie_root,
             ngram if ngram in {1, 2, 3} else 2)
 
