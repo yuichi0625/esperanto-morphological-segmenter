@@ -6,7 +6,7 @@ This is a reimplementation of [EsperantoWordSegmenter](https://github.com/tguina
 - [Installation](#Installation)
 - [Usage](#Usage)
     - [src/word_segmenter.py](#srcword_segmenterpy)
-    - [e_segmenter (as a package)](#e_segmenter-as-a-package)
+    - [esperanto_word_segmenter (as a package)](#esperanto_word_segmenter-as-a-package)
 - [Accuracy](#Accuracy)
 - [Problems to be solved](#Problems-to-be-solved)
 
@@ -41,9 +41,9 @@ dependas
 ```
 
 
-### e_segmenter (as a package)
+### esperanto_word_segmenter (as a package)
 ```python
-from e_segmenter import EsperantoWordSegmenter
+from esperanto_word_segmenter import EsperantoWordSegmenter
 
 segmenter = EspernatoWordSegmenter()
 segmenter('belulino')  # -> "bel'ul'in'o"

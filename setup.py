@@ -5,10 +5,10 @@ training_file = Path('EsperantoWordSegmenter/experiments/train.txt')
 morphemes_by_type_directory = Path('EsperantoWordSegmenter/morphemesByType/sets')
 
 setup(
-    name='e_segmenter',
+    name='esperanto_word_segmenter',
     version='0.1.0',
     packages=find_packages(),
-    py_modules=['e_segmenter'],
+    py_modules=['esperanto_word_segmenter'],
     python_requires='>=3.6',
     install_requires=[],
     data_files=[
