@@ -18,7 +18,7 @@ This is a reimplementation of [EsperantoWordSegmenter](https://github.com/tguina
 $ git clone https://github.com/yuichi0625/reimplemented-esperanto-word-segmenter.git --recursive
 
 # You don't need to install as a package if you just want to give it a try.
-# Instead, please use src/word_segmenter.py
+# If so, please use src/word_segmenter.py instead.
 $ python setup.py install
 ```
 
@@ -37,6 +37,7 @@ animalo
 belulino
 certe
 dependas
+...
 ```
 
 
@@ -47,24 +48,16 @@ from e_segmenter import EsperantoWordSegmenter
 segmenter = EspernatoWordSegmenter()
 segmenter('belulino')  # -> "bel'ul'in'o"
 segmenter('katojn')    # -> "kat'ojn" (word endings are concatenated)
-segmenter('facebook')  # -> "" (if no valid segmentation is found)
+segmenter('2021')      # -> "2021" (if no valid segmentation is found)
 ```
 
-CAUTION: If you try this in this directory (I mean `Path(README.md).parent`), it will raise an error because it will try to read e_segmenter in this directory directly, which is empty.
-
 ## Accuracy
-| train data | evaluation data | n_gram | accuracy (%) | correct (pcs) | incorrect (pcs) |
-| --- | --- | --- | --- | --- | --- |
-| train.txt | test.txt | 2 | 97.74 | 10352 | 239 |
-| train.txt | test.txt | 3 | 97.81 | 10359 | 232 |
-| train.txt | random_words.txt | 2 | 87.5 | 14 | 2 |
-| train.txt | random_words.txt | 3 | 87.5 | 14 | 2 |
-| train.txt | liberafolio_2020_09_09.txt | 2 | 98.54 | 405 | 6 |
-| train.txt | liberafolio_2020_09_09.txt | 3 | 98.54 | 405 | 6 |
-| train.txt | liberafolio_2020_09_16.txt | 2 | 95.67 | 309 | 14 |
-| train.txt | liberafolio_2020_09_16.txt | 3 | 95.67 | 309 | 14 |
-| train.txt | liberafolio_2020_09_22.txt | 2 | 98.05 | 251 | 5 |
-| train.txt | liberafolio_2020_09_22.txt | 3 | 98.05 | 251 | 5 |
+| evaluation data | n_gram | accuracy (%) | correct (pcs) | incorrect (pcs) |
+| --- | --- | --- | --- | --- |
+| random_words.txt | 2, 3 | 87.5 | 14 | 2 |
+| liberafolio_2020_09_09.txt | 2, 3 | 99.29 | 423 | 3 |
+| liberafolio_2020_09_16.txt | 2, 3 | 98.02 | 348 | 7 |
+| liberafolio_2020_09_22.txt | 2, 3 | 98.51 | 266 | 4 |
 
 ## Problems to be solved
 I met some problems when reimplementing the algorithm:
