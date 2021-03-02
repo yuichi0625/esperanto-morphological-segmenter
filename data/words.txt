@@ -8,9 +8,9 @@ malsanulejo	mal'san'ul'ej'o
 prapraavinarojn	pra'pra'av'in'ar'ojn
 prezidanto	prezid'ant'o
 scivolema	sci'vol'em'a
-vaporoŝipo	vapor'o'ŝip'o
-vaporŝipo	vapor'ŝip'o
-vinmiksaĵo	vin'miks'aĵ'o
 ŝipovaporo	ŝip'o'vapor'o
 ŝipvaporo	ŝip'vapor'o
 ŝtatimpostadministrantoj	ŝtat'impost'administr'ant'oj
+vaporoŝipo	vapor'o'ŝip'o
+vaporŝipo	vapor'ŝip'o
+vinmiksaĵo	vin'miks'aĵ'o
